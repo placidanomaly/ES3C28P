@@ -28,6 +28,8 @@ Compiling sketches for this board requires the following settings under the **To
 
 ## Usage
 
+### Arduino IDE
+
 1. Open the Arduino IDE **Library Manager**, search for **ES3C28P**, and install it (along with its dependencies, `TFT_eSPI` and `lvgl`).
 2. Copy the `build_opt.h` file from this library's `examples/basic` folder into the same directory as your `.ino` sketch file.
 
@@ -53,6 +55,12 @@ Arduino IDE 2.x uses `build_opt.h` to pass compiler flags directly to `TFT_eSPI`
 -DSPI_READ_FREQUENCY=16000000
 ```
 
+### PlatformIO
+
+### PlatformIO
+
+If you are using PlatformIO, copy the `platformio.ini` from `examples_platformio/basic` into your project. It includes all required compiler flags under `build_flags` (since PlatformIO does not read Arduino IDE's `build_opt.h`) and pulls `ES3C28P` along with its `TFT_eSPI` and `LVGL` dependencies automatically via `lib_deps`.
+
 ### Minimal Sketch
 
 ```cpp
@@ -76,9 +84,12 @@ void loop() {
 }
 ```
 
-## Example
+## Examples
 
-The `examples/basic` sketch displays a SquareLine Studio UI with a checkbox, draws an LVGL object, and handles drag and click touch events. Open `basic.ino` in the Arduino IDE and click **Upload**. *(Note: The initial compilation will take several minutes while `LVGL` and `TFT_eSPI` compile).*
+Both examples below display a SquareLine Studio UI with a checkbox, draw an LVGL object, and handle drag and click touch events:
+
+- **Arduino IDE (`examples/basic`):** Open `basic.ino` in the Arduino IDE and click **Upload**. *(Note: The initial compilation will take several minutes while `LVGL` and `TFT_eSPI` compile).*
+- **PlatformIO (`examples_platformio/basic`):** Open the `examples_platformio/basic` folder in VS Code with the PlatformIO extension. The included `platformio.ini` is pre-configured with all required build flags and libraries.
 
 ## Future Improvements
 
