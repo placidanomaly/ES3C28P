@@ -4,13 +4,13 @@ ES3C28P is a compact ESP32-S3-based development board sold on AliExpress featuri
 
 ![ES3C28P](./assets/ES3C28P.png)
 
-The vendor-supplied documentation for this board is cryptic and suggests dropping replacement files into existing Arduino libraries. This library provides a clean alternative without modifying any third-party library files. It configures the ILI9341 LCD with `TFT_eSPI`, initializes **LVGL 9.6**, and registers the FT6336 touchscreen as an LVGL input device.
+The vendor-supplied documentation for this board is cryptic and suggests dropping replacement files into standard Arduino libraries, which should be avoided. This library provides a clean alternative without modifying any third-party library files. It configures the ILI9341 LCD with `TFT_eSPI`, initializes **LVGL 9.6**, and registers the FT6336 touchscreen as an LVGL input device.
 
 No special helper functions are needed to access the exposed UART or I2C pins on the back of the board—you can use standard Arduino `Serial` and `Wire` libraries directly.
 
 > **Note on Screen Orientation:** This library was tested in portrait orientation with the USB port at the bottom (short LCD edge horizontal). Using the other three orientations will require adjustments to map touch coordinates to screen coordinates. Orientation support is planned for an upcoming release.
 
-The board also includes a speaker output, battery input, and microphone input. While there are no immediate plans to implement drivers for these peripherals, pull requests to add them are welcome!
+The board also includes a speaker output, battery input, and microphone input. While there are no immediate plans to implement drivers for these peripherals, pull requests to add them are welcome.
 
 ## Arduino IDE Settings
 
@@ -33,7 +33,7 @@ Compiling sketches for this board requires the following settings under the **To
 1. Open the Arduino IDE **Library Manager**, search for **ES3C28P**, and install it (along with its dependencies, `TFT_eSPI` and `lvgl`).
 2. Copy the `build_opt.h` file from this library's `examples/basic` folder into the same directory as your `.ino` sketch file.
 
-Arduino IDE 2.x uses `build_opt.h` to pass compiler flags directly to `TFT_eSPI` and `LVGL` without editing library source files. It must contain the following directives (see `es3c28p.h` for details):
+Arduino IDE 2.x uses `build_opt.h` to pass compiler flags directly to `TFT_eSPI` and `LVGL` without editing library source files. It must contain the following directives (see comments in `es3c28p.h` for details):
 
 ```text
 -DUSER_SETUP_LOADED=1
@@ -57,14 +57,12 @@ Arduino IDE 2.x uses `build_opt.h` to pass compiler flags directly to `TFT_eSPI`
 
 ### PlatformIO
 
-### PlatformIO
-
 If you are using PlatformIO, copy the `platformio.ini` from `examples_platformio/basic` into your project. It includes all required compiler flags under `build_flags` (since PlatformIO does not read Arduino IDE's `build_opt.h`) and pulls `ES3C28P` along with its `TFT_eSPI` and `LVGL` dependencies automatically via `lib_deps`.
 
-### Minimal Sketch
+### Minimal Arduino Sketch and PlatformIO program
 
 ```cpp
-#include <es3c28p.h>
+#include <ES3C28P.h>
 
 ES3C28P *board = nullptr;
 
@@ -91,12 +89,14 @@ Both examples below display a SquareLine Studio UI with a checkbox, draw an LVGL
 - **Arduino IDE (`examples/basic`):** Open `basic.ino` in the Arduino IDE and click **Upload**. *(Note: The initial compilation will take several minutes while `LVGL` and `TFT_eSPI` compile).*
 - **PlatformIO (`examples_platformio/basic`):** Open the `examples_platformio/basic` folder in VS Code with the PlatformIO extension. The included `platformio.ini` is pre-configured with all required build flags and libraries.
 
+The SquareLine Studio design is the `.spj` file in the `assets` folder. It can be modified and exported into the `ui` folder of the example programs.
+
 ## Future Improvements
 
-Contributions and pull requests are welcome for the following planned features:
+Contributions and pull requests are welcome for the following features:
 
 - Support for all four screen orientations (including automatic touch coordinate rotation)
-- Full initialization of all onboard peripherals
+- Full initialization and control of all onboard peripherals
 - LCD power ON/OFF and hardware reset controls
 - Backlight PWM brightness control
 - Light and Deep Sleep power management

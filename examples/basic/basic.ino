@@ -1,7 +1,7 @@
 #include <Arduino.h>
-#include <es3c28p.h>
+#include <ES3C28P.h>
 #include "src/ui/ui.h"
-
+ 
 ES3C28P *board = nullptr;
  
 // Test UI variables

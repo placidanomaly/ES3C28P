@@ -1,6 +1,6 @@
 {
   "name": "ES3C28P",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Clean ESP32-S3 driver wrapper for the ES3C28P 2.8-inch ILI9341 SPI LCD and FT6336 capacitive touchscreen using TFT_eSPI and LVGL 9.6 without modifying third-party libraries.",
   "keywords": [
     "esp32",
@@ -25,7 +25,7 @@
     }
   ],
   "license": "MIT",
-  "homepage": "https://github.com/placidanomaly/ES3C28P/LICENSE",
+  "homepage": "https://github.com/placidanomaly/ES3C28P",
   "dependencies": {
     "bodmer/TFT_eSPI": "^2.5.43",
     "lvgl/lvgl": "^9.6.0"
@@ -40,21 +40,62 @@
     "srcDir": "src",
     "includeDir": "src"
   },
+  "export": {
+    "include": [
+      "assets/*",
+      "assets/**/*",
+      "src/*",
+      "src/**/*",
+      "examples/**/*",
+      "examples_platformio/**/*",
+      "library.json",
+      "library.properties",
+      "README.md",
+      "LICENSE"
+    ],
+    "exclude": [
+      "**/.pio/**",
+      "**/.vscode/**",
+      "**/*.tar.gz"
+    ]
+  },
   "examples": [
     {
-      "name": "Basic (PlatformIO)",
+      "name": "Basic - PlatformIO",
       "base": "examples_platformio/basic",
       "files": [
         "platformio.ini",
-        "main.cpp"
+        "main.cpp",
+        "src/ui/CMakeLists.txt",
+        "src/ui/components/ui_comp_hook.c",
+        "src/ui/filelist.txt",
+        "src/ui/project.info",
+        "src/ui/screens/ui_Screen1.c",
+        "src/ui/screens/ui_Screen1.h",
+        "src/ui/ui.c",
+        "src/ui/ui.h",
+        "src/ui/ui_events.h",
+        "src/ui/ui_helpers.c",
+        "src/ui/ui_helpers.h"
       ]
     },
     {
-      "name": "Basic (Arduino)",
+      "name": "Basic - Arduino",
       "base": "examples/basic",
       "files": [
         "basic.ino",
-        "build_opt.h"
+        "build_opt.h",
+        "src/ui/CMakeLists.txt",
+        "src/ui/components/ui_comp_hook.c",
+        "src/ui/filelist.txt",
+        "src/ui/project.info",
+        "src/ui/screens/ui_Screen1.c",
+        "src/ui/screens/ui_Screen1.h",
+        "src/ui/ui.c",
+        "src/ui/ui.h",
+        "src/ui/ui_events.h",
+        "src/ui/ui_helpers.c",
+        "src/ui/ui_helpers.h"
       ]
     }
   ]
