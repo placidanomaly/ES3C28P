@@ -1,4 +1,4 @@
-#include "es3c28p.h"
+#include "ES3C28P.h"
 #include <Wire.h>
 
 ES3C28P::ES3C28P() {}

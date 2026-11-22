@@ -1,6 +1,6 @@
 {
   "name": "ES3C28P",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Clean ESP32-S3 driver wrapper for the ES3C28P 2.8-inch ILI9341 SPI LCD and FT6336 capacitive touchscreen using TFT_eSPI and LVGL 9.6 without modifying third-party libraries.",
   "keywords": [
     "esp32",
@@ -42,19 +42,21 @@
   },
   "examples": [
     {
-      "name": "Basic (PlatformIO)",
+      "name": "Basic - PlatformIO",
       "base": "examples_platformio/basic",
       "files": [
         "platformio.ini",
-        "main.cpp"
+        "main.cpp",
+        "src/**"
       ]
     },
     {
-      "name": "Basic (Arduino)",
+      "name": "Basic - Arduino",
       "base": "examples/basic",
       "files": [
         "basic.ino",
-        "build_opt.h"
+        "build_opt.h",
+        "src/**"
       ]
     }
   ]
