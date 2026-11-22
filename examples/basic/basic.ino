@@ -3,7 +3,7 @@
 #include "src/ui/ui.h"
 
 ES3C28P *board = nullptr;
-
+ 
 // Test UI variables
 lv_obj_t *touch_circle_ = nullptr;
 lv_obj_t *label_ = nullptr;
