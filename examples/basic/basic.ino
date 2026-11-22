@@ -1,8 +1,8 @@
 #include <Arduino.h>
-#include <esp32_2.8.h>
+#include <es3c28p.h>
 #include "src/ui/ui.h"
 
-Esp32_28 *board = nullptr;
+ES3C28P *board = nullptr;
 
 // Test UI variables
 lv_obj_t *touch_circle_ = nullptr;
@@ -113,7 +113,7 @@ void createTestUi() {
 }
 
 void setup() {
-  board = &Esp32_28::getInstance();
+  board = &ES3C28P::getInstance();
 
   Serial.begin(115200);
   delay(1000);
