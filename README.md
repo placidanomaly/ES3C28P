@@ -80,8 +80,7 @@ The `examples/basic` program in the library displays a Squareline Studios-genera
 
 It would be nice to enable all the features of the device in this library, which would include the following:
 
-- Support for different screen orientations
-- Full initialization of all components
+- Support for different screen orientations (coming soon)
 - LCD power ON/OFF and reset
 - Backlight intensity setting
 - Light and Deep Sleep functionality
