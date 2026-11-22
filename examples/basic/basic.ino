@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <esp32_2.8.h>
+#include <es3c28p.h>
 #include "src/ui/ui.h"
 
 Esp32_28 *board = nullptr;

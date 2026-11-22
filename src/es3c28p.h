@@ -68,9 +68,9 @@ lib_deps =
 #include <lvgl.h>
 
 
-class Esp32_28 {
+class ES3C28P {
   public:
-    static Esp32_28 &getInstance();
+    static ES3C28P &getInstance();
     
     void begin();
     void loop();
@@ -83,7 +83,7 @@ class Esp32_28 {
     static constexpr uint32_t DISP_VER_RES = 320;
 
   private:
-    Esp32_28();
+    ES3C28P();
 
     static constexpr uint32_t BUF_LINES = 20;
     static constexpr size_t DRAW_BUF_BYTES =
@@ -100,7 +100,7 @@ class Esp32_28 {
     lv_indev_t *touch_indev_ = nullptr;
     uint32_t last_tick_ms_ = 0;
 
-    inline static Esp32_28 *instance_ = nullptr;
+    inline static ES3C28P *instance_ = nullptr;
 
     void initBacklight();
     void initLcd();

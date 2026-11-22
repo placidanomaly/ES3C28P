@@ -1,24 +1,24 @@
-#include "esp32_2.8.h"
+#include "es3c28p.h"
 #include <Wire.h>
 
-Esp32_28::Esp32_28() {}
+ES3C28P::ES3C28P() {}
 
-Esp32_28 &Esp32_28::getInstance() {
+ES3C28P &ES3C28P::getInstance() {
   if(instance_ == nullptr)
-    instance_ = new Esp32_28();
+    instance_ = new ES3C28P();
   
   return *instance_;
 }
 
-lv_display_t *Esp32_28::getDisplay() {
+lv_display_t *ES3C28P::getDisplay() {
   return display_;
 }
 
-lv_indev_t *Esp32_28::getTouchDev() {
+lv_indev_t *ES3C28P::getTouchDev() {
   return touch_indev_;
 }
 
-void Esp32_28::begin() {
+void ES3C28P::begin() {
   initBacklight();
   initLcd();
   initLvglDisplay();
@@ -29,25 +29,25 @@ void Esp32_28::begin() {
   last_tick_ms_ = millis();
 }
 
-void Esp32_28::loop() {
+void ES3C28P::loop() {
   const uint32_t now = millis();
   lv_tick_inc(now - last_tick_ms_);
   last_tick_ms_ = now;
   lv_timer_handler();
 }
 
-void Esp32_28::initBacklight() {
+void ES3C28P::initBacklight() {
   pinMode(LCD_BL_PIN, OUTPUT);
   digitalWrite(LCD_BL_PIN, HIGH);
 }
 
-void Esp32_28::initLcd() {
+void ES3C28P::initLcd() {
   tft_.init();
   applyPanelInitCommands();
   tft_.fillScreen(TFT_BLACK);
 }
 
-void Esp32_28::applyPanelInitCommands() {
+void ES3C28P::applyPanelInitCommands() {
   tft_.writecommand(static_cast<uint8_t>(0xCF));
   tft_.writedata(static_cast<uint8_t>(0x00));
   tft_.writedata(static_cast<uint8_t>(0xC1));
@@ -137,7 +137,7 @@ void Esp32_28::applyPanelInitCommands() {
   tft_.writecommand(static_cast<uint8_t>(0x29));
 }
 
-void Esp32_28::initLvglDisplay() {
+void ES3C28P::initLvglDisplay() {
   lv_init();
 
   void *buffer =
@@ -153,7 +153,7 @@ void Esp32_28::initLvglDisplay() {
       LV_DISPLAY_RENDER_MODE_PARTIAL);
 }
 
-void Esp32_28::flushCallback(lv_display_t *display,
+void ES3C28P::flushCallback(lv_display_t *display,
                              const lv_area_t *area,
                              uint8_t *pixels) {
   if (instance_ == nullptr) {
@@ -174,7 +174,7 @@ void Esp32_28::flushCallback(lv_display_t *display,
   lv_display_flush_ready(display);
 }
 
-void Esp32_28::initTouch() {
+void ES3C28P::initTouch() {
   pinMode(TP_INT_PIN, INPUT_PULLUP);
   pinMode(TP_RST_PIN, OUTPUT);
 
@@ -186,7 +186,7 @@ void Esp32_28::initTouch() {
   Wire.begin(TP_SDA_PIN, TP_SCL_PIN, 400000); // 400 kHz Fast Mode I2C
 }
 
-bool Esp32_28::readTouch(int32_t &x, int32_t &y) {
+bool ES3C28P::readTouch(int32_t &x, int32_t &y) {
   Wire.beginTransmission(FT6336_ADDR);
   Wire.write(0x02);
   if (Wire.endTransmission(false) != 0) {
@@ -211,12 +211,12 @@ bool Esp32_28::readTouch(int32_t &x, int32_t &y) {
   return true;
 }
 
-void Esp32_28::touchReadCallback(lv_indev_t *indev, lv_indev_data_t *data) {
+void ES3C28P::touchReadCallback(lv_indev_t *indev, lv_indev_data_t *data) {
   LV_UNUSED(indev);
   int32_t x = 0;
   int32_t y = 0;
 
-  if (instance_ != nullptr && Esp32_28::getInstance().readTouch(x, y)) {
+  if (instance_ != nullptr && ES3C28P::getInstance().readTouch(x, y)) {
     data->point.x = x;
     data->point.y = y;
     data->state = LV_INDEV_STATE_PRESSED;
@@ -225,7 +225,7 @@ void Esp32_28::touchReadCallback(lv_indev_t *indev, lv_indev_data_t *data) {
   }
 }
 
-void Esp32_28::initLvglTouch() {
+void ES3C28P::initLvglTouch() {
   touch_indev_ = lv_indev_create();
   lv_indev_set_type(touch_indev_, LV_INDEV_TYPE_POINTER);
   lv_indev_set_read_cb(touch_indev_, touchReadCallback);
