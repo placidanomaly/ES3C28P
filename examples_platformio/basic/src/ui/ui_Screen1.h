@@ -13,9 +13,15 @@ extern "C" {
 // SCREEN: ui_Screen1
 extern void ui_Screen1_screen_init(void);
 extern void ui_Screen1_screen_destroy(void);
+extern void ui_event_Screen1(lv_event_t * e);
 extern lv_obj_t * ui_Screen1;
-extern void ui_event_checkbox1(lv_event_t * e);
-extern lv_obj_t * ui_checkbox1;
+extern void ui_event_brightnessSlider(lv_event_t * e);
+extern lv_obj_t * ui_brightnessSlider;
+extern lv_obj_t * ui_Label1;
+extern void ui_event_rotateButton(lv_event_t * e);
+extern lv_obj_t * ui_rotateButton;
+extern lv_obj_t * ui_Label2;
+extern lv_obj_t * ui_Label3;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

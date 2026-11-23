@@ -1,6 +1,6 @@
 {
   "name": "ES3C28P",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Clean ESP32-S3 driver wrapper for the ES3C28P 2.8-inch ILI9341 SPI LCD and FT6336 capacitive touchscreen using TFT_eSPI and LVGL 9.6 without modifying third-party libraries.",
   "keywords": [
     "esp32",
@@ -66,17 +66,14 @@
       "files": [
         "platformio.ini",
         "main.cpp",
-        "src/ui/CMakeLists.txt",
-        "src/ui/components/ui_comp_hook.c",
-        "src/ui/filelist.txt",
-        "src/ui/project.info",
-        "src/ui/screens/ui_Screen1.c",
-        "src/ui/screens/ui_Screen1.h",
-        "src/ui/ui.c",
-        "src/ui/ui.h",
+        "src/ui/ui_comp_hook.c",
         "src/ui/ui_events.h",
         "src/ui/ui_helpers.c",
-        "src/ui/ui_helpers.h"
+        "src/ui/ui_helpers.h",
+        "src/ui/ui_Screen1.c",
+        "src/ui/ui_Screen1.h",
+        "src/ui/ui.c",
+        "src/ui/ui.h"
       ]
     },
     {
@@ -86,16 +83,15 @@
         "basic.ino",
         "build_opt.h",
         "src/ui/CMakeLists.txt",
-        "src/ui/components/ui_comp_hook.c",
         "src/ui/filelist.txt",
-        "src/ui/project.info",
-        "src/ui/screens/ui_Screen1.c",
-        "src/ui/screens/ui_Screen1.h",
-        "src/ui/ui.c",
-        "src/ui/ui.h",
+        "src/ui/ui_comp_hook.c",
         "src/ui/ui_events.h",
         "src/ui/ui_helpers.c",
-        "src/ui/ui_helpers.h"
+        "src/ui/ui_helpers.h",
+        "src/ui/ui_Screen1.c",
+        "src/ui/ui_Screen1.h",
+        "src/ui/ui.c",
+        "src/ui/ui.h"
       ]
     }
   ]
