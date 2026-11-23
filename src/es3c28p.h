@@ -67,16 +67,85 @@ lib_deps =
 
 #include <lvgl.h>
 
+#ifndef TFT_WIDTH
+  #define TFT_WIDTH 240
+#endif
+
+#ifndef TFT_HEIGHT
+  #define TFT_HEIGHT 320
+#endif
 
 class ES3C28P {
   public:
+    /**
+     * @brief Returns a reference to a singleton of the ES3C28P
+     * @details Because there can only be a single ES3C28P board in any
+     * given program, the class has to be a singleton. This method
+     * takes care of creating the first instance of the ES3C28P object and,
+     * if it already exists, returns a reference to it.
+     * @return A reference to the singleton ES3C28P object (which can be
+     * dereferenced to a pointer with &)
+    */
     static ES3C28P &getInstance();
     
+    /**
+     * @brief MUST be called by the main program's setup() function
+     * @details Initializes the LCD driver chip, the LCD display, the touch 
+     * controller, and connects all of those to the LVGL framework.
+     */
     void begin();
+
+    /**
+     * @brief MUST be called by the main program's loop() function
+     * @details If not called, the entire LVGL framework, including rendering,
+     * touchscreen events, etc., will not work.
+     */
     void loop();
 
+    /**
+     * @brief Returns a pointer to the low-level LVGL display object
+     * @returns A lv_display_t * pointer to the LVGL display 
+     */
     lv_display_t *getDisplay();
+    
+    /**
+     * @brief Returns a pointer to the LVGL touch device
+     * @returns A lv_indev_t * pointer to the LVGL touch input device
+     */
     lv_indev_t *getTouchDev();
+
+
+    /**
+     * @brief Sets the rotation of the LCD display
+     * @details  Whenever called, the UI must be recreated. For Squareline 
+     * Studio-generated UIs, this means calling ui_init() after setRotation().
+     * @param[in] rotation A value of 0 sets the orientation to portrait mode (i.e.
+     * short side of LCD horizontal) with the USB type C connector pointing
+     * down. Higher values of 1, 2, and 3, each rotate the screen 90 degrees
+     * counterclockwise relative to the previous value.
+     */
+    void setRotation(uint8_t rotation);
+
+    /**
+     * @brief Returns the current rotation setting of the display
+     * @returns The value corresponding to the current orientation of the
+     * display. See setRotation() for the meaning of possible return values.
+     */
+    uint8_t getRotation() const { return rotation_; }
+
+    /**
+     * @brief Sets the brightness of the LCD backlight
+     * @param[in] brightness A value of 0 (backlight turned OFF) to 255
+     * (100% intensity) 
+     */
+    void setBrightness(uint8_t brightness); // 0 (off) to 255 (full brightness)
+
+    /**
+     * @brief Returns the current backlight brightness setting
+     * @returns A value between 0 and 255 corresponding to the current brightness
+     * of the LCD backlight
+     */
+    uint8_t getBrightness() const { return brightness_; }
 
     static constexpr uint32_t LCD_BL_PIN = 45;
     static constexpr uint32_t DISP_HOR_RES = 240;
@@ -94,11 +163,16 @@ class ES3C28P {
     static constexpr int TP_RST_PIN = 18;
     static constexpr int TP_INT_PIN = 17;
     static constexpr uint8_t FT6336_ADDR = 0x38;
+    static constexpr uint32_t LCD_BL_PWM_FREQ = 5000;
+    static constexpr uint8_t  LCD_BL_PWM_RES  = 8; // 8-bit (0-255)
+    static constexpr uint8_t  LCD_BL_PWM_CH   = 0; // Used only on Core 2.x
 
     TFT_eSPI tft_;
     lv_display_t *display_ = nullptr;
     lv_indev_t *touch_indev_ = nullptr;
     uint32_t last_tick_ms_ = 0;
+    uint8_t rotation_ = 0;
+    uint8_t brightness_ = 255;
 
     inline static ES3C28P *instance_ = nullptr;
 

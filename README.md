@@ -6,15 +6,19 @@ ES3C28P is a compact ESP32-S3-based development board sold on AliExpress featuri
 
 The vendor-supplied documentation for this board is cryptic and suggests dropping replacement files into standard Arduino libraries, which should be avoided. This library provides a clean alternative without modifying any third-party library files. It configures the ILI9341 LCD with `TFT_eSPI`, initializes **LVGL 9.6**, and registers the FT6336 touchscreen as an LVGL input device.
 
-No special helper functions are needed to access the exposed UART or I2C pins on the back of the board—you can use standard Arduino `Serial` and `Wire` libraries directly.
+The repo for this library where `README.md` can be viewed fully formatted is [here](https://github.com/placidanomaly/ES3C28P).
 
-> **Note on Screen Orientation:** This library was tested in portrait orientation with the USB port at the bottom (short LCD edge horizontal). Using the other three orientations will require adjustments to map touch coordinates to screen coordinates. Orientation support is planned for an upcoming release.
+## Features
+
+The library provides an easy way to set up LVGL 9.6 on the ES3C28P device including support for the LCD rendering, screen orientation, backlight intensity, and touchscreen events. The details of the API are documented in Doxygen comments in [ES3C28P.h](src/ES3C28P.cpp).
+
+No special helper functions are needed to access the exposed UART or I2C pins on the back of the board—you can use standard Arduino `Serial` and `Wire` libraries directly.
 
 The board also includes a speaker output, battery input, and microphone input. While there are no immediate plans to implement drivers for these peripherals, pull requests to add them are welcome.
 
 ## Arduino IDE Settings
 
-Compiling sketches for this board requires the following settings under the **Tools** menu in Arduino IDE (2.x recommended):
+Compiling sketches for this board requires the following settings under the **Tools** menu in Arduino IDE (2.x or better required):
 
 - **Board:** ESP32S3 Dev Module
 - **USB CDC On Boot:** Enabled
@@ -61,6 +65,8 @@ If you are using PlatformIO, copy the `platformio.ini` from `examples_platformio
 
 ### Minimal Arduino Sketch and PlatformIO program
 
+This is the simplest program that will activate the LCD and enable LVGL functionality:
+
 ```cpp
 #include <ES3C28P.h>
 
@@ -73,7 +79,8 @@ void setup() {
   delay(1000);
 
   board->begin();
-  Serial.println("Board initialized");
+
+Serial.println("Board initialized");
 }
 
 void loop() {
@@ -84,21 +91,27 @@ void loop() {
 
 ## Examples
 
-Both examples below display a SquareLine Studio UI with a checkbox, draw an LVGL object, and handle drag and click touch events:
+Both examples below display a SquareLine Studio UI with a slider to control LCD backlight intensity and a button to change screen orientation. They draw a circle object using raw LVGL primitives and enable dragging and clicking on the screen to move that object around. The UI looks like this:
 
-- **Arduino IDE (`examples/basic`):** Open `basic.ino` in the Arduino IDE and click **Upload**. *(Note: The initial compilation will take several minutes while `LVGL` and `TFT_eSPI` compile).*
-- **PlatformIO (`examples_platformio/basic`):** Open the `examples_platformio/basic` folder in VS Code with the PlatformIO extension. The included `platformio.ini` is pre-configured with all required build flags and libraries.
+![examples screenshot](assets/screenshots/Screen1.png)
 
-The SquareLine Studio design is the `.spj` file in the `assets` folder. It can be modified and exported into the `ui` folder of the example programs.
+The SquareLine Studio UI design is the `assets/esp32_28.spj` file. It can be modified and the UI code can be re-generated and exported into the `src/ui` folder of the example programs. Depending on whether you use the Arduino IDE or PlatformIO examples, set the *UI Files Export Path* in **File->Project Settings** to match the `src/ui` folder of the example program you are using.
+
+Here's how to run them under Arduino IDE and PlatformIO in VS Code.
+
+### Arduino IDE
+
+Open `examples/basic/basic.ino` in the Arduino IDE and click **Upload**. *(Note: The initial compilation will take several minutes while `LVGL` and `TFT_eSPI` compile).*
+
+### PlatformIO
+
+Open the `examples_platformio/basic` folder in VS Code with the PlatformIO extension. The included `platformio.ini` is pre-configured with all required build flags and libraries.
 
 ## Future Improvements
 
 Contributions and pull requests are welcome for the following features:
 
-- Support for all four screen orientations (including automatic touch coordinate rotation)
 - Full initialization and control of all onboard peripherals
-- LCD power ON/OFF and hardware reset controls
-- Backlight PWM brightness control
 - Light and Deep Sleep power management
 - Speaker (I2S) and microphone support
 

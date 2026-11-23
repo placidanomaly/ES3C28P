@@ -10,6 +10,10 @@
 extern "C" {
 #endif
 
+void onScreenLongPress(lv_event_t * e);
+void onBrightnessSliderChanged(lv_event_t * e);
+void onRotateButtonClicked(lv_event_t * e);
+
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

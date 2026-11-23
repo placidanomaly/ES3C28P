@@ -18,9 +18,42 @@ lv_indev_t *ES3C28P::getTouchDev() {
   return touch_indev_;
 }
 
+void ES3C28P::setRotation(uint8_t rotation) {
+  rotation_ = rotation % 4;
+  tft_.setRotation(rotation_);
+
+  // Override ILI9341 MADCTL (0x36) for ES3C28P panel wiring
+  // Bits: MY=0x80, MX=0x40, MV=0x20, BGR=0x08
+  tft_.startWrite();
+  tft_.writecommand(0x36);
+  switch (rotation_) {
+    case 0: // Portrait (USB bottom)
+      tft_.writedata(0x08); // BGR only (fixes horizontal mirror)
+      break;
+    case 1: // Landscape (USB right)
+      tft_.writedata(0xA8); // MY | MV | BGR
+      break;
+    case 2: // Portrait inverted (USB top)
+      tft_.writedata(0xC8); // MY | MX | BGR
+      break;
+    case 3: // Landscape inverted (USB left)
+      tft_.writedata(0x68); // MX | MV | BGR
+      break;
+  }
+  tft_.endWrite();
+
+  if (display_ != nullptr) {
+    if (rotation_ == 1 || rotation_ == 3) {
+      lv_display_set_resolution(display_, TFT_HEIGHT, TFT_WIDTH);
+    } else {
+      lv_display_set_resolution(display_, TFT_WIDTH, TFT_HEIGHT);
+    }
+  }
+}
+
 void ES3C28P::begin() {
-  initBacklight();
   initLcd();
+  initBacklight();
   initLvglDisplay();
 
   initTouch();
@@ -37,8 +70,21 @@ void ES3C28P::loop() {
 }
 
 void ES3C28P::initBacklight() {
-  pinMode(LCD_BL_PIN, OUTPUT);
-  digitalWrite(LCD_BL_PIN, HIGH);
+#if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0)
+  ledcAttach(LCD_BL_PIN, LCD_BL_PWM_FREQ, LCD_BL_PWM_RES);
+#else
+  ledcSetup(LCD_BL_PWM_CH, LCD_BL_PWM_FREQ, LCD_BL_PWM_RES);
+  ledcAttachPin(LCD_BL_PIN, LCD_BL_PWM_CH);
+#endif
+  setBrightness(255); // Default to 100% brightness at startup
+}
+
+void ES3C28P::setBrightness(uint8_t brightness) {
+#if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0)
+  ledcWrite(LCD_BL_PIN, brightness);
+#else
+  ledcWrite(LCD_BL_PWM_CH, brightness);
+#endif
 }
 
 void ES3C28P::initLcd() {
@@ -213,12 +259,35 @@ bool ES3C28P::readTouch(int32_t &x, int32_t &y) {
 
 void ES3C28P::touchReadCallback(lv_indev_t *indev, lv_indev_data_t *data) {
   LV_UNUSED(indev);
-  int32_t x = 0;
-  int32_t y = 0;
+  int32_t raw_x = 0;
+  int32_t raw_y = 0;
 
-  if (instance_ != nullptr && ES3C28P::getInstance().readTouch(x, y)) {
-    data->point.x = x;
-    data->point.y = y;
+  if (instance_ != nullptr && ES3C28P::getInstance().readTouch(raw_x, raw_y)) {
+    ES3C28P &board = ES3C28P::getInstance();
+    int32_t mapped_x = raw_x;
+    int32_t mapped_y = raw_y;
+
+    switch (board.rotation_) {
+      case 0: // Portrait (USB bottom)
+        mapped_x = raw_x;
+        mapped_y = raw_y;
+        break;
+      case 1: // Landscape (USB right)
+        mapped_x = (TFT_HEIGHT - 1) - raw_y;
+        mapped_y = raw_x;
+        break;
+      case 2: // Portrait inverted (USB top)
+        mapped_x = (TFT_WIDTH - 1) - raw_x;
+        mapped_y = (TFT_HEIGHT - 1) - raw_y;
+        break;
+      case 3: // Landscape inverted (USB left)
+        mapped_x = raw_y;
+        mapped_y = (TFT_WIDTH - 1) - raw_x;
+        break;
+    }
+
+    data->point.x = constrain(mapped_x, 0, board.tft_.width() - 1);
+    data->point.y = constrain(mapped_y, 0, board.tft_.height() - 1);
     data->state = LV_INDEV_STATE_PRESSED;
   } else {
     data->state = LV_INDEV_STATE_RELEASED;

@@ -1,20 +1,13 @@
-#include <Arduino.h>
 #include <ES3C28P.h>
 #include "src/ui/ui.h"
- 
+
 ES3C28P *board = nullptr;
  
 // Test UI variables
 lv_obj_t *touch_circle_ = nullptr;
-lv_obj_t *label_ = nullptr;
 lv_point_t drag_offset_ = {};
 static constexpr int32_t CIRCLE_SIZE = 24;
 
-static void onCheckboxChanged(lv_event_t *event) {
-  lv_obj_t *checkbox = lv_event_get_target_obj(event);
-  const bool checked = lv_obj_has_state(checkbox, LV_STATE_CHECKED);
-  Serial.printf("Checkbox %s\n", checked ? "checked" : "unchecked");
-}
 
 void screenTouchCallback(lv_event_t *event) {
   if (touch_circle_ == nullptr ||
@@ -88,21 +81,17 @@ void createTestUi() {
   lv_obj_t *screen = lv_screen_active();
   lv_obj_set_style_bg_color(screen, lv_color_black(), LV_PART_MAIN);
 
-  label_ = lv_label_create(screen);
-  lv_label_set_text(label_, "LVGL 9.6 on ESP32-S3");
-  lv_obj_set_style_text_color(label_, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
-  lv_obj_center(label_);
-  lv_obj_set_event_bubble(label_, true);
-
   touch_circle_ = lv_obj_create(screen);
+  lv_obj_remove_style_all(touch_circle_); // Clears ALL theme styles, scrollbars, padding, and shadows
   lv_obj_set_size(touch_circle_, CIRCLE_SIZE, CIRCLE_SIZE);
-  lv_obj_set_style_radius(touch_circle_, LV_RADIUS_CIRCLE, LV_PART_MAIN);
-  lv_obj_set_style_bg_color(
-      touch_circle_, lv_color_hex(0xFFE600), LV_PART_MAIN);
-  lv_obj_set_style_border_color(
-      touch_circle_, lv_color_hex(0xFF2A2A), LV_PART_MAIN);
-  lv_obj_set_style_border_width(touch_circle_, 2, LV_PART_MAIN);
   lv_obj_set_pos(touch_circle_, 10, 10);
+  lv_obj_set_style_radius(touch_circle_, LV_RADIUS_CIRCLE, 0);
+  lv_obj_set_style_bg_color(touch_circle_, lv_color_hex(0xFFE600), 0);
+  lv_obj_set_style_bg_opa(touch_circle_, LV_OPA_COVER, 0);
+  lv_obj_set_style_border_color(touch_circle_, lv_color_hex(0xFF2A2A), 0);
+  lv_obj_set_style_border_width(touch_circle_, 2, 0);
+
+  lv_obj_set_pos(touch_circle_, 10, 50);
   lv_obj_set_event_bubble(touch_circle_, true);
   lv_obj_add_event_cb(
       touch_circle_, dragCircleCallback, LV_EVENT_PRESSED, nullptr);
@@ -110,6 +99,27 @@ void createTestUi() {
       touch_circle_, dragCircleCallback, LV_EVENT_PRESSING, nullptr);
   lv_obj_add_event_cb(
       screen, screenTouchCallback, LV_EVENT_PRESSED, nullptr);
+}
+
+extern "C" void onBrightnessSliderChanged(lv_event_t * e) {
+  ES3C28P *board = &ES3C28P::getInstance();
+  
+  board->setBrightness(lv_slider_get_value(ui_brightnessSlider));
+}
+
+extern "C" void onScreenLongPress(lv_event_t * e) {
+  ES3C28P *board = &ES3C28P::getInstance();
+  
+  board->setBrightness(255);
+  lv_slider_set_value(ui_brightnessSlider, 255, LV_ANIM_ON);
+}
+
+extern "C" void onRotateButtonClicked(lv_event_t * e) {
+  ES3C28P *board = &ES3C28P::getInstance();
+
+  board->setRotation(board->getRotation() + 1);
+  ui_init();
+  createTestUi();
 }
 
 void setup() {
@@ -120,13 +130,13 @@ void setup() {
   Serial.println("In setup");
 
   board->begin();
+  board->setRotation(0);
+  board->setBrightness(255); 
   Serial.println("Board initialized");
 
   ui_init();
   Serial.println("Squareline Studios UI initialized");
 
-  lv_obj_add_event_cb(
-      ui_checkbox1, onCheckboxChanged, LV_EVENT_VALUE_CHANGED, nullptr);
   createTestUi();
   Serial.println("Test UI initialized. Setup complete.");
 }
